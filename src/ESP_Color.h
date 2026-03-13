@@ -22,6 +22,9 @@ You should have received a copy of the GNU Affero General Public License along w
 #include "Colors.hpp"
 #include "Palette.hpp"
 
+#include "Beat.hpp"
+#include "Easing.hpp"
+#include "Shapes.hpp"
 
 class String;
 
@@ -79,23 +82,21 @@ namespace ESP_Color
 		{
 		}
 
-		explicit constexpr Color(const std::uint16_t color_rgb565, const float alpha = 1.0) :
-			R(static_cast<std::uint8_t>((((((color_rgb565 >> 11) & 0x1F) * 527) + 23) >> 6)) / 255.0F),
-			G(static_cast<std::uint8_t>(((((color_rgb565 >> 5) & 0x3F) * 259) + 33) >> 6) / 255.0F),
-			B(static_cast<std::uint8_t>((((color_rgb565 & 0x1F) * 527) + 23) >> 6) / 255.0F),
-			A(alpha)
+		explicit constexpr Color(const std::uint16_t color_rgb565, const float alpha = 1.0) : R(static_cast<std::uint8_t>((((((color_rgb565 >> 11) & 0x1F) * 527) + 23) >> 6)) / 255.0F),
+																							  G(static_cast<std::uint8_t>(((((color_rgb565 >> 5) & 0x3F) * 259) + 33) >> 6) / 255.0F),
+																							  B(static_cast<std::uint8_t>((((color_rgb565 & 0x1F) * 527) + 23) >> 6) / 255.0F),
+																							  A(alpha)
 		{
 		}
 
-		explicit constexpr Color(const std::uint32_t color) :
-			R(static_cast<std::uint8_t>((color & 0xFF000000U) >> 24) / 255.0F),
-			G(static_cast<std::uint8_t>((color & 0x00FF0000U) >> 16) / 255.0F),
-			B(static_cast<std::uint8_t>((color & 0x0000FF00U) >> 8) / 255.0F),
-			A(static_cast<std::uint8_t>(color & 0x000000FFU) / 255.0F)
+		explicit constexpr Color(const std::uint32_t color) : R(static_cast<std::uint8_t>((color & 0xFF000000U) >> 24) / 255.0F),
+															  G(static_cast<std::uint8_t>((color & 0x00FF0000U) >> 16) / 255.0F),
+															  B(static_cast<std::uint8_t>((color & 0x0000FF00U) >> 8) / 255.0F),
+															  A(static_cast<std::uint8_t>(color & 0x000000FFU) / 255.0F)
 		{
 		}
 
-		Color& operator=(const std::uint32_t color)
+		Color &operator=(const std::uint32_t color)
 		{
 			R = static_cast<std::uint8_t>((color & 0xFF000000U) >> 24) / 255.0F;
 			G = static_cast<std::uint8_t>((color & 0x00FF0000U) >> 16) / 255.0F;
@@ -105,37 +106,36 @@ namespace ESP_Color
 			return *this;
 		}
 
-		Color(const std::uint8_t red, const std::uint8_t green, const std::uint8_t blue, const std::uint8_t alpha = 0xFFU) :
-			R(red / 255.0F),
-			G(green / 255.0F),
-			B(blue / 255.0F),
-			A(alpha / 255.0F)
+		Color(const std::uint8_t red, const std::uint8_t green, const std::uint8_t blue, const std::uint8_t alpha = 0xFFU) : R(red / 255.0F),
+																															 G(green / 255.0F),
+																															 B(blue / 255.0F),
+																															 A(alpha / 255.0F)
 		{
 		}
 
-		Color(const float red, const float green, const float blue, const float alpha = 1.0f) :
-			R(constrainf(red)),
-			G(constrainf(green)),
-			B(constrainf(blue)),
-			A(constrainf(alpha))
-		{ }
+		Color(const float red, const float green, const float blue, const float alpha = 1.0f) : R(constrainf(red)),
+																								G(constrainf(green)),
+																								B(constrainf(blue)),
+																								A(constrainf(alpha))
+		{
+		}
 
 		Color(const float color[4]) : R(color[0]),
-			G(color[1]),
-			B(color[2]),
-			A(color[3])
+									  G(color[1]),
+									  B(color[2]),
+									  A(color[3])
 		{
 		}
 
-		Color operator+(const Color& color) const
+		Color operator+(const Color &color) const
 		{
 			return Color(R + color.R,
-				G + color.G,
-				B + color.B,
-				A + color.A);
+						 G + color.G,
+						 B + color.B,
+						 A + color.A);
 		}
 
-		Color& operator+=(const float value)
+		Color &operator+=(const float value)
 		{
 			R = constrainf(R + value);
 			G = constrainf(G + value);
@@ -144,15 +144,15 @@ namespace ESP_Color
 			return *this;
 		}
 
-		Color operator-(const Color& color) const
+		Color operator-(const Color &color) const
 		{
 			return Color(R - color.R,
-				G - color.G,
-				B - color.B,
-				A - color.A);
+						 G - color.G,
+						 B - color.B,
+						 A - color.A);
 		}
 
-		Color& operator-=(const float value)
+		Color &operator-=(const float value)
 		{
 			R = constrainf(R - value);
 			G = constrainf(G - value);
@@ -164,12 +164,12 @@ namespace ESP_Color
 		Color operator*(const float value) const
 		{
 			return Color(R * value,
-				G * value,
-				B * value,
-				A * value);
+						 G * value,
+						 B * value,
+						 A * value);
 		}
 
-		Color& operator*=(const float value)
+		Color &operator*=(const float value)
 		{
 			R = constrainf(R * value);
 			G = constrainf(G * value);
@@ -181,12 +181,12 @@ namespace ESP_Color
 		Color operator/(const float value) const
 		{
 			return Color(R / value,
-				G / value,
-				B / value,
-				A / value);
+						 G / value,
+						 B / value,
+						 A / value);
 		}
 
-		Color& operator/=(const float value)
+		Color &operator/=(const float value)
 		{
 			R = constrainf(R / value);
 			G = constrainf(G / value);
@@ -215,7 +215,7 @@ namespace ESP_Color
 			return static_cast<std::uint8_t>(A * 255.0F);
 		}
 
-		Color LinearTo(const Color& target, float t) const
+		Color LinearTo(const Color &target, float t) const
 		{
 			float r = (target.R - R) * t + R;
 			float g = (target.G - G) * t + G;
@@ -323,8 +323,10 @@ namespace ESP_Color
 		{
 			long number;
 
-			if (hex[0] == '#') number = strtol(&hex[1], nullptr, 16);
-			else number = strtol(&hex[0], nullptr, 16);
+			if (hex[0] == '#')
+				number = strtol(&hex[1], nullptr, 16);
+			else
+				number = strtol(&hex[0], nullptr, 16);
 
 			uint8_t r = number >> 16;
 			uint8_t g = number >> 8 & 0xFF;
@@ -333,30 +335,39 @@ namespace ESP_Color
 			return Color(r, g, b);
 		}
 
-		static Color FromGradient(const Color& color1, const Color& color2, const float t)
+		static Color FromGradient(const Color &color1, const Color &color2, const float t)
 		{
 			return color1.LinearTo(color2, t);
 		}
 
-		static Color FromGradient(const Color& color1, const Color& color2, const Color& color3, const float t)
+		static Color FromGradient(const Color &color1, const Color &color2, const Color &color3, const float t)
 		{
-			if (t <= 0.5f) return color1.LinearTo(color2, t * 2);
-			else return color2.LinearTo(color3, (t - 0.5f) * 2);
+			if (t <= 0.5f)
+				return color1.LinearTo(color2, t * 2);
+			else
+				return color2.LinearTo(color3, (t - 0.5f) * 2);
 		}
 
-		static Color FromGradient(const Color& color1, const Color& color2, const Color& color3, const Color& color4, const float t)
+		static Color FromGradient(const Color &color1, const Color &color2, const Color &color3, const Color &color4, const float t)
 		{
-			if (t <= 0.333333333f) return color1.LinearTo(color2, t * 3);
-			else if (t <= 0.666666666f) return color2.LinearTo(color3, (t - 0.333333333f) * 3);
-			else return color3.LinearTo(color4, (t - 0.666666666f) * 3);
+			if (t <= 0.333333333f)
+				return color1.LinearTo(color2, t * 3);
+			else if (t <= 0.666666666f)
+				return color2.LinearTo(color3, (t - 0.333333333f) * 3);
+			else
+				return color3.LinearTo(color4, (t - 0.666666666f) * 3);
 		}
 
-		static Color FromGradient(const Color& color1, const Color& color2, const Color& color3, const Color& color4, const Color& color5, const float t)
+		static Color FromGradient(const Color &color1, const Color &color2, const Color &color3, const Color &color4, const Color &color5, const float t)
 		{
-			if (t <= 0.25f) return color1.LinearTo(color2, t * 4);
-			else if (t <= 0.5f) return color2.LinearTo(color3, (t - 0.25f) * 4);
-			else if (t <= 0.75f) return color3.LinearTo(color4, (t - 0.5f) * 4);
-			else return color4.LinearTo(color5, (t - 0.75f) * 4);
+			if (t <= 0.25f)
+				return color1.LinearTo(color2, t * 4);
+			else if (t <= 0.5f)
+				return color2.LinearTo(color3, (t - 0.25f) * 4);
+			else if (t <= 0.75f)
+				return color3.LinearTo(color4, (t - 0.5f) * 4);
+			else
+				return color4.LinearTo(color5, (t - 0.75f) * 4);
 		}
 
 		RGBi ToRgbi()
@@ -372,9 +383,9 @@ namespace ESP_Color
 		std::uint32_t ToRgba8888()
 		{
 			return (static_cast<std::uint32_t>(R * 255.0F) << 24) |
-				(static_cast<std::uint32_t>(G * 255.0F) << 16) |
-				(static_cast<std::uint32_t>(B * 255.0F) << 8) |
-				static_cast<std::uint32_t>(A * 255.0F);
+				   (static_cast<std::uint32_t>(G * 255.0F) << 16) |
+				   (static_cast<std::uint32_t>(B * 255.0F) << 8) |
+				   static_cast<std::uint32_t>(A * 255.0F);
 		}
 
 		std::uint32_t ToRgb888()
@@ -475,7 +486,7 @@ namespace ESP_Color
 
 		String ToHex(std::uint8_t r, std::uint8_t g, std::uint8_t b)
 		{
-			char hexArray[6] = { 0 };
+			char hexArray[6] = {0};
 			sprintf(hexArray, "%02X%02X%02X", R_Byte(), G_Byte(), B_Byte());
 			String hex = hexArray;
 			return hex;
@@ -501,43 +512,41 @@ namespace ESP_Color
 			return R > threshold || G > threshold || B > threshold;
 		}
 
-		template<class T>
+		template <class T>
 		typename std::enable_if<std::is_same<T, Color>::value, uint32_t>::type
-			To() { this; }
+		To() { this; }
 
-		template<class T>
+		template <class T>
 		typename std::enable_if<std::is_same<T, uint32_t>::value, uint32_t>::type
-			To() { return ToRgb888(); }
+		To() { return ToRgb888(); }
 
-		template<class T>
+		template <class T>
 		typename std::enable_if<std::is_same<T, uint16_t>::value, uint16_t>::type
-			To() { return ToRgb565(); }
+		To() { return ToRgb565(); }
 
-		template<class T>
+		template <class T>
 		typename std::enable_if<std::is_same<T, uint8_t>::value, uint8_t>::type
-			To() { return ToRgb332(); }
+		To() { return ToRgb332(); }
 
-		template<class T>
+		template <class T>
 		typename std::enable_if<std::is_same<T, RGBi>::value, RGBi>::type
-			To() { return ToRgbi(); }
+		To() { return ToRgbi(); }
 
-
-		template<class T>
+		template <class T>
 		typename std::enable_if<std::is_same<T, HSVf>::value, HSVf>::type
-			To() { return ToHsv(); }
+		To() { return ToHsv(); }
 
-		template<class T>
+		template <class T>
 		typename std::enable_if<std::is_same<T, HSLf>::value, HSLf>::type
-			To() { return ToHsl(); }
+		To() { return ToHsl(); }
 
 		//	template<class T>
-		//typename std::enable_if<std::is_same<T, HSLi>::value, uint8_t>::type
+		// typename std::enable_if<std::is_same<T, HSLi>::value, uint8_t>::type
 		//	To() { return ToRgb332(); }
 
-		//template<class T>
-		//typename std::enable_if<std::is_same<T, HSLf>::value, uint8_t>::type
+		// template<class T>
+		// typename std::enable_if<std::is_same<T, HSLf>::value, uint8_t>::type
 		//	To() { return ToRgb332(); }
-
 
 		static constexpr std::uint8_t RGB_TO_RGB332(std::uint8_t r, std::uint8_t g, std::uint8_t b) { return (r >> 5) << 5 | (g >> 5) << 2 | b >> 6; }
 		static constexpr std::uint16_t RGB_TO_RGB565(std::uint8_t r, std::uint8_t g, std::uint8_t b) { return (r >> 3) << 11 | (g >> 2) << 5 | b >> 3; }
@@ -579,9 +588,18 @@ namespace ESP_Color
 		static float ToGray(const float r, const float g, const float b, const GRAY_ALGORITHM mode = LUMINOSITY)
 		{
 			float grey = 0;
-			if (mode == GRAY_ALGORITHM::LUMINOSITY) { grey = (0.21f * r + 0.72f * g + 0.07f * b); }
-			else if (mode == GRAY_ALGORITHM::LIGHTNESS) { grey = (threeway_max(r, g, b) + threeway_min(r, g, b)) / 2; }
-			else { grey = ((r + g + b) / 3); }
+			if (mode == GRAY_ALGORITHM::LUMINOSITY)
+			{
+				grey = (0.21f * r + 0.72f * g + 0.07f * b);
+			}
+			else if (mode == GRAY_ALGORITHM::LIGHTNESS)
+			{
+				grey = (threeway_max(r, g, b) + threeway_min(r, g, b)) / 2;
+			}
+			else
+			{
+				grey = ((r + g + b) / 3);
+			}
 
 			return grey;
 		}
@@ -598,8 +616,10 @@ namespace ESP_Color
 
 		static float constrainf(float f, float minf = 0.0f, float maxf = 1.0f)
 		{
-			if (f > maxf) f = maxf;
-			if (f < minf) f = minf;
+			if (f > maxf)
+				f = maxf;
+			if (f < minf)
+				f = minf;
 			return f;
 		}
 
